@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { Text, View, Button, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-class Nearest extends Component{
+class Favourite extends Component{
   render() {
 
     return (
       <View>
-        <Text> Nearest
+        <Text> Favourite
         </Text>
       </View>
     );
@@ -21,4 +21,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Nearest;
+export default Favourite;
