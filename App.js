@@ -8,23 +8,36 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import Nearest from './components/Nearest';
 import Find from './components/Find';
 import Sign from './components/Sign';
 import Login from './components/Login';
 import Logout from './components/Logout';
 import Favourite from './components/Favourite';
 import Account from './components/Account';
+import Review from './components/Review';
 
 const RootStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
+const FindStack = createStackNavigator();
+
+function FindReviews({navigation}) {
+  return (
+    <FindStack.Navigator initialRouteName="Find">
+      <FindStack.Screen
+        name="Find"
+        component={Find}
+        options={{headerShown: false}}
+      />
+      <FindStack.Screen name="Review" component={Review} />
+    </FindStack.Navigator>
+  );
+}
 
 function Locations({navigation}) {
   return (
-    <Tab.Navigator initialRouteName="Nearest">
-      <Tab.Screen name="Nearest" component={Nearest} />
-      <Tab.Screen name="Find" component={Find} />
+    <Tab.Navigator initialRouteName="Find">
+      <Tab.Screen name="Find" component={FindReviews} />
       <Tab.Screen name="Favourite" component={Favourite} />
     </Tab.Navigator>
   );

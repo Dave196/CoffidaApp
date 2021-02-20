@@ -19,7 +19,7 @@ class Account extends Component {
       orig_first_name: '',
       orig_last_name: '',
       orig_email: '',
-      orig_password:'',
+      orig_password: '',
       //states that would be updated
       first_name: '',
       last_name: '',
@@ -54,6 +54,10 @@ class Account extends Component {
   };
 
   getAccount = async () => {
+    this.setState({
+      isLoading: true,
+    });
+
     let token = await AsyncStorage.getItem('@session_token');
     let id = await AsyncStorage.getItem('@user_ID');
 
@@ -71,7 +75,7 @@ class Account extends Component {
           throw 'something went wrong';
         }
       })
-      .then(async (responseJson) => {
+      .then((responseJson) => {
         this.setState({
           isLoading: false,
           orig_first_name: responseJson.first_name,
@@ -123,6 +127,7 @@ class Account extends Component {
         if (response.status === 200) {
           console.log('Account info updated:');
           this.clearPassword();
+          this.getAccount();
         } else if (response.status === 400) {
           throw 'Bad Request';
         } else if (response.status === 401) {
@@ -181,7 +186,7 @@ class Account extends Component {
                 <Text>{item.first_name} </Text>
               </View>
             )}
-            keyExtractor={(item,index) => item.id.toString()}
+            keyExtractor={(item, index) => item.id.toString()}
           />
         </View>
       );

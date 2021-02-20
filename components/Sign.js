@@ -44,11 +44,11 @@ class Sign extends Component {
   successfulSignUp = () => {
     this.clearText();
     this.props.navigation.navigate('Login');
-  }
+  };
 
   signInInstead = () => {
     this.clearText();
-    this.props.navigation.goBack()
+    this.props.navigation.goBack();
   };
 
   SignUp = () => {

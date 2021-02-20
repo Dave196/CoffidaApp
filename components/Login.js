@@ -59,10 +59,12 @@ class Login extends Component {
         }
       })
       .then(async (responseJson) => {
+        let ID = JSON.stringify(responseJson.id);
+
         console.log('user signed in:', responseJson);
         await AsyncStorage.setItem('@session_token', responseJson.token);
-        let ID = JSON.stringify(responseJson.id);
         await AsyncStorage.setItem('@user_ID', ID);
+        //await AsyncStorage.setItem('@Favourite', )
         this.successfulLogin();
       })
       .catch((error) => {
