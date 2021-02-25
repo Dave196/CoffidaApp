@@ -34,8 +34,8 @@ class Login extends Component {
 
   successfulLogin = () => {
     this.clearText();
-    this.props.navigation.navigate('Home');
-  }
+    this.props.navigation.navigate('Main');
+  };
 
   signUpInstead = () => {
     this.clearText();
@@ -75,20 +75,23 @@ class Login extends Component {
 
   render() {
     return (
-      <View>
+      <View style={styles.flexContainer}>
+        <Text style={styles.title}>Login </Text>
         <TextInput
+          style={styles.textInput}
           placeholder="Email..."
           onChangeText={this.handleEmailInput}
           value={this.state.email}
         />
         <TextInput
+          style={styles.textInput}
           placeholder="Password..."
           onChangeText={this.handlePasswordInput}
           value={this.state.password}
           secureTextEntry={true}
         />
         <Button title="Login" onPress={this.login} color="#841584" />
-
+        <Text> Don't have an account? Sign up instead </Text>
         <Button title="Sign up" onPress={this.signUpInstead} color="#841584" />
       </View>
     );
@@ -98,11 +101,18 @@ class Login extends Component {
 const styles = StyleSheet.create({
   flexContainer: {
     flex: 1,
-    justifyContent: 'center',
-    backgroundColor: 'white',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'antiquewhite',
+  },
+  title: {
+    flex: 1,
+    fontWeight: 'bold',
   },
   textInput: {
-    backgroundColor: 'steelblue',
+    flex: 2,
+    width: 200,
+    backgroundColor: 'dimgray',
     borderStyle: 'solid',
     borderWidth: 2,
   },

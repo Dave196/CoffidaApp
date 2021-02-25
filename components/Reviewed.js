@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-class Favourite extends Component {
+class Reviewed extends Component {
   constructor(props) {
     super(props);
 
@@ -23,7 +23,7 @@ class Favourite extends Component {
 
   componentDidMount() {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.getFavLocations();
+      this.getRevLocations();
     });
   }
 
@@ -31,10 +31,10 @@ class Favourite extends Component {
     this.unsubscribe();
   }
 
-  getFavLocations = async () => {
+  getRevLocations = async () => {
     const token = await AsyncStorage.getItem('@session_token');
 
-    return fetch('http://10.0.2.2:3333/api/1.0.0/find?search_in=favourite', {
+    return fetch('http://10.0.2.2:3333/api/1.0.0/find?search_in=reviewed', {
       headers: {'X-Authorization': token},
     })
       .then((response) => {
@@ -59,41 +59,6 @@ class Favourite extends Component {
         ToastAndroid.show(error, ToastAndroid.SHORT);
       });
   };
-
-  async deleteFavourite(item) {
-    const token = await AsyncStorage.getItem('@session_token');
-
-    this.setState({
-      isLoading: true,
-    });
-
-    return fetch(
-      'http://10.0.2.2:3333/api/1.0.0/location/' +
-        item.location_id +
-        '/favourite',
-      {
-        method: 'DELETE',
-        headers: {'X-Authorization': token},
-      },
-    )
-      .then((response) => {
-        if (response.status === 200) {
-          this.getFavLocations();
-        } else if (response.status === 400) {
-          throw 'Bad request';
-        } else if (response.status === 401) {
-          throw 'Unauthorised';
-        } else if (response.status === 404) {
-          throw 'Not Found';
-        } else {
-          throw 'server error';
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        ToastAndroid.show(error, ToastAndroid.SHORT);
-      });
-  }
 
   async navigateToLogation(ID) {
     await AsyncStorage.setItem('@location_id', JSON.stringify(ID));
@@ -120,10 +85,6 @@ class Favourite extends Component {
                     {item.location_name}--{item.location_town}
                   </Text>
                 </Pressable>
-                <Button
-                  title="remove"
-                  onPress={() => this.deleteFavourite(item)}
-                />
               </View>
             )}
             keyExtractor={(item, index) => item.location_id.toString()}
@@ -141,4 +102,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Favourite;
+export default Reviewed;

@@ -25,7 +25,6 @@ class Account extends Component {
       last_name: '',
       email: '',
       password: '',
-      reviews: [],
     };
   }
 
@@ -86,7 +85,6 @@ class Account extends Component {
           last_name: responseJson.last_name,
           email: responseJson.email,
           password: '',
-          reviews: responseJson.reviews,
         });
       })
       .catch((error) => {
@@ -103,20 +101,15 @@ class Account extends Component {
     if (this.state.first_name !== this.state.orig_first_name) {
       toSend.first_name = this.state.first_name;
     }
-
     if (this.state.last_name !== this.state.orig_last_name) {
       toSend.last_name = this.state.last_name;
     }
-
     if (this.state.email !== this.state.orig_email) {
       toSend.email = this.state.email;
     }
-
     if (this.state.password !== '') {
       toSend.password = this.state.password;
     }
-
-    console.log(toSend);
 
     return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + id, {
       method: 'PATCH',
