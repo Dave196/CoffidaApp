@@ -31,9 +31,21 @@ function Locations({navigation}) {
         component={Home}
         options={{headerShown: false}}
       />
-      <LocationStack.Screen name="Location" component={Location} />
-      <LocationStack.Screen name="NewReview" component={NewReview} />
-      <LocationStack.Screen name="UpdateReview" component={UpdateReview} />
+      <LocationStack.Screen
+        name="Location"
+        component={Location}
+        options={{headerShown: false}}
+      />
+      <LocationStack.Screen
+        name="NewReview"
+        component={NewReview}
+        options={{headerShown: false}}
+      />
+      <LocationStack.Screen
+        name="UpdateReview"
+        component={UpdateReview}
+        options={{headerShown: false}}
+      />
       <LocationStack.Screen name="Camera" component={Camera} />
     </LocationStack.Navigator>
   );
@@ -41,7 +53,18 @@ function Locations({navigation}) {
 
 function Home({navigation}) {
   return (
-    <Tab.Navigator initialRouteName="Find">
+    <Tab.Navigator
+      initialRouteName="Find"
+      tabBarOptions={{
+        activeTintColor: 'white',
+        inactiveTintColor: 'lightgray',
+        activeBackgroundColor: '#B8860B',
+        inactiveBackgroundColor: 'black',
+        labelStyle: {
+          fontWeight: 'bold',
+          fontSize: 14,
+        },
+      }}>
       <Tab.Screen name="Find" component={Find} />
       <Tab.Screen name="Favourite" component={Favourite} />
       <Tab.Screen name="Reviewed" component={Reviewed} />

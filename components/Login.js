@@ -43,56 +43,66 @@ class Login extends Component {
   };
 
   login = async () => {
-    //Validation to be added
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/login', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(this.state),
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        } else if (response.status === 400) {
-          throw 'Invalid email/password';
-        } else {
-          throw 'something went wrong';
-        }
+    if (this.state.email === '' || this.state.password === '') {
+      Alert.alert('Type an email and password');
+    } else {
+      return fetch('http://10.0.2.2:3333/api/1.0.0/user/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(this.state),
       })
-      .then(async (responseJson) => {
-        let ID = JSON.stringify(responseJson.id);
-
-        console.log('user signed in:', responseJson);
-        await AsyncStorage.setItem('@session_token', responseJson.token);
-        await AsyncStorage.setItem('@user_ID', ID);
-        //await AsyncStorage.setItem('@Favourite', )
-        this.successfulLogin();
-      })
-      .catch((error) => {
-        console.error(error);
-        ToastAndroid.show(error, ToastAndroid.SHORT);
-      });
+        .then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          } else if (response.status === 400) {
+            throw 'Invalid email/password';
+          } else {
+            throw 'something went wrong';
+          }
+        })
+        .then(async (responseJson) => {
+          ToastAndroid.show('Logged in', ToastAndroid.SHORT);
+          let ID = JSON.stringify(responseJson.id);
+          await AsyncStorage.setItem('@session_token', responseJson.token);
+          await AsyncStorage.setItem('@user_ID', ID);
+          this.successfulLogin();
+        })
+        .catch((error) => {
+          ToastAndroid.show(error, ToastAndroid.SHORT);
+        });
+    }
   };
 
   render() {
     return (
       <View style={styles.flexContainer}>
-        <Text style={styles.title}>Login </Text>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Email..."
-          onChangeText={this.handleEmailInput}
-          value={this.state.email}
-        />
-        <TextInput
-          style={styles.textInput}
-          placeholder="Password..."
-          onChangeText={this.handlePasswordInput}
-          value={this.state.password}
-          secureTextEntry={true}
-        />
-        <Button title="Login" onPress={this.login} color="#841584" />
-        <Text> Don't have an account? Sign up instead </Text>
-        <Button title="Sign up" onPress={this.signUpInstead} color="#841584" />
+        <View style={styles.titleView}>
+          <Text style={styles.title}>Login </Text>
+        </View>
+        <View style={styles.loginInputView}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Email..."
+            onChangeText={this.handleEmailInput}
+            value={this.state.email}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Password..."
+            onChangeText={this.handlePasswordInput}
+            value={this.state.password}
+            secureTextEntry={true}
+          />
+        </View>
+        <View style={styles.buttonView}>
+          <Button title="Login" onPress={this.login} color="#B8860B" />
+          <Text> Don't have an account? Sign up instead </Text>
+          <Button
+            title="Sign up"
+            onPress={this.signUpInstead}
+            color="#B8860B"
+          />
+        </View>
       </View>
     );
   }
@@ -101,23 +111,39 @@ class Login extends Component {
 const styles = StyleSheet.create({
   flexContainer: {
     flex: 1,
-    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'antiquewhite',
+    backgroundColor: 'white',
+  },
+  titleView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    backgroundColor: '#B8860B',
+    borderBottomWidth: 2,
+    borderStyle: 'solid',
   },
   title: {
-    flex: 1,
+    fontFamily: 'Monospace',
     fontWeight: 'bold',
+    color: 'white',
+    fontSize: 30,
+  },
+  loginInputView: {
+    flex: 3,
+    justifyContent: 'space-around',
   },
   textInput: {
-    flex: 2,
-    width: 200,
+    width: 300,
     backgroundColor: 'dimgray',
     borderStyle: 'solid',
     borderWidth: 2,
+    color: 'white',
+    fontWeight: 'bold',
   },
-  loginButton: {
-    backgroundColor: '#841584',
+  buttonView: {
+    justifyContent: 'space-around',
+    flex: 8,
   },
 });
 

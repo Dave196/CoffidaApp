@@ -38,7 +38,7 @@ class Sign extends Component {
   };
 
   clearText = () => {
-    this.setState({first_name: '', lastName: '', email: '', password: ''});
+    this.setState({first_name: '', last_name: '', email: '', password: ''});
   };
 
   successfulSignUp = () => {
@@ -48,67 +48,87 @@ class Sign extends Component {
 
   signInInstead = () => {
     this.clearText();
-    this.props.navigation.goBack();
+    this.props.navigation.navigate('Login');
   };
 
   SignUp = () => {
-    //Validation to be added
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(this.state),
-    })
-      .then((response) => {
-        if (response.status === 201) {
-          return response.json();
-        } else if (response.status === 400) {
-          throw 'failed validation';
-        } else {
-          throw 'something went wrong';
-        }
+    if (
+      this.state.first_name === '' ||
+      this.state.last_name === '' ||
+      this.state.email === '' ||
+      this.state.password === ''
+    ) {
+      Alert.alert('Not all fields have been entered');
+    } else {
+      return fetch('http://10.0.2.2:3333/api/1.0.0/user', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(this.state),
       })
-      .then(async (responseJson) => {
-        console.log('User created with ID:', responseJson);
-        this.clearText();
-        this.props.navigation.navigate('Login');
-      })
-      .catch((error) => {
-        console.error(error);
-        ToastAndroid.show(error, ToastAndroid.SHORT);
-      });
+        .then((response) => {
+          if (response.status === 201) {
+            return response.json();
+          } else if (response.status === 400) {
+            throw 'failed validation';
+          } else {
+            throw 'something went wrong';
+          }
+        })
+        .then(async (responseJson) => {
+          ToastAndroid.show('user created', ToastAndroid.SHORT);
+          this.clearText();
+          this.props.navigation.navigate('Login');
+        })
+        .catch((error) => {
+          ToastAndroid.show(error, ToastAndroid.SHORT);
+        });
+    }
   };
 
   render() {
     return (
-      <View>
-        <TextInput
-          placeholder="First Name..."
-          onChangeText={this.handleFirstNameInput}
-          value={this.state.first_name}
-        />
-        <TextInput
-          placeholder="Last Name..."
-          onChangeText={this.handleLastNameInput}
-          value={this.state.last_name}
-        />
-        <TextInput
-          placeholder="Email..."
-          onChangeText={this.handleEmailInput}
-          value={this.state.email}
-        />
-        <TextInput
-          placeholder="Password..."
-          onChangeText={this.handlePasswordInput}
-          value={this.state.password}
-          secureTextEntry={true}
-        />
-        <Button title="Sign up" onPress={this.SignUp} color="#841584" />
+      <View style={styles.flexContainer}>
+        <View style={styles.titleView}>
+          <Text style={styles.title}> Sign Up </Text>
+        </View>
+        <View style={styles.signInputView}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="First Name..."
+            onChangeText={this.handleFirstNameInput}
+            value={this.state.first_name}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Last Name..."
+            onChangeText={this.handleLastNameInput}
+            value={this.state.last_name}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Email..."
+            onChangeText={this.handleEmailInput}
+            value={this.state.email}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Password..."
+            onChangeText={this.handlePasswordInput}
+            value={this.state.password}
+            secureTextEntry={true}
+          />
+        </View>
+        <View style={styles.buttonView}>
+          <Button title="Sign up" onPress={this.SignUp} color="#B8860B" />
 
-        <Button
-          title="Login instead"
-          onPress={this.signInInstead}
-          color="#841584"
-        />
+          <Text> Already have an account? </Text>
+
+          <Button
+            title="Login instead"
+            onPress={this.signInInstead}
+            color="#B8860B"
+          />
+        </View>
       </View>
     );
   }
@@ -117,16 +137,38 @@ class Sign extends Component {
 const styles = StyleSheet.create({
   flexContainer: {
     flex: 1,
-    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: 'white',
   },
+  titleView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    backgroundColor: '#B8860B',
+    borderBottomWidth: 2,
+    borderStyle: 'solid',
+  },
+  title: {
+    fontWeight: 'bold',
+    fontSize: 30,
+    color: 'white',
+  },
+  signInputView: {
+    flex: 6,
+    justifyContent: 'space-around',
+  },
   textInput: {
-    backgroundColor: 'steelblue',
+    width: 300,
+    backgroundColor: 'dimgray',
     borderStyle: 'solid',
     borderWidth: 2,
+    color: 'white',
+    fontWeight: 'bold',
   },
-  loginButton: {
-    backgroundColor: '#841584',
+  buttonView: {
+    justifyContent: 'space-around',
+    flex: 5,
   },
 });
 

@@ -3,12 +3,13 @@ import {
   Text,
   View,
   Button,
+  StyleSheet,
   TextInput,
   ToastAndroid,
   ActivityIndicator,
-  FlatList,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 class Account extends Component {
   constructor(props) {
@@ -75,6 +76,7 @@ class Account extends Component {
         }
       })
       .then((responseJson) => {
+        ToastAndroid.show('Account updated', ToastAndroid.SHORT);
         this.setState({
           isLoading: false,
           orig_first_name: responseJson.first_name,
@@ -88,7 +90,6 @@ class Account extends Component {
         });
       })
       .catch((error) => {
-        console.error(error);
         ToastAndroid.show(error, ToastAndroid.SHORT);
       });
   };
@@ -147,44 +148,88 @@ class Account extends Component {
       );
     } else {
       return (
-        <View>
-          <Text> My Account</Text>
-          <TextInput
-            placeholder="First Name..."
-            onChangeText={this.handleFirstNameInput}
-            value={this.state.first_name}
-          />
-          <TextInput
-            placeholder="Last Name..."
-            onChangeText={this.handleLastNameInput}
-            value={this.state.last_name}
-          />
-          <TextInput
-            placeholder="Email..."
-            onChangeText={this.handleEmailInput}
-            value={this.state.email}
-          />
-          <TextInput
-            placeholder="New Password"
-            onChangeText={this.handlePasswordInput}
-            value={this.state.password}
-            secureTextEntry={true}
-          />
-          <Button title="Update" onPress={this.updateAccount} color="#841584" />
-          <FlatList
-            data={this.state.reviews}
-            renderItem={({item}) => (
-              <View>
-                <Text>flatlist </Text>
-                <Text>{item.first_name} </Text>
-              </View>
-            )}
-            keyExtractor={(item, index) => item.id.toString()}
-          />
+        <View style={styles.flexContainer}>
+          <View style={styles.titleView}>
+            <Icon name="menu" size={30} color="white" />
+            <Text style={styles.title}> Account</Text>
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.textInput}
+              placeholder="First Name..."
+              onChangeText={this.handleFirstNameInput}
+              value={this.state.first_name}
+            />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Last Name..."
+              onChangeText={this.handleLastNameInput}
+              value={this.state.last_name}
+            />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Email..."
+              onChangeText={this.handleEmailInput}
+              value={this.state.email}
+            />
+            <TextInput
+              style={styles.textInput}
+              placeholder="New Password"
+              onChangeText={this.handlePasswordInput}
+              value={this.state.password}
+              secureTextEntry={true}
+            />
+          </View>
+          <View style={styles.buttonView}>
+            <Button
+              title="Update"
+              onPress={this.updateAccount}
+              color="#B8860B"
+            />
+          </View>
         </View>
       );
     }
   }
 }
+
+const styles = StyleSheet.create({
+  flexContainer: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  titleView: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor: '#B8860B',
+    borderBottomWidth: 2,
+    borderStyle: 'solid',
+  },
+  title: {
+    fontWeight: 'bold',
+    fontSize: 30,
+    color: 'white',
+  },
+  inputView: {
+    flex: 6,
+    justifyContent: 'space-around',
+  },
+  textInput: {
+    width: 300,
+    backgroundColor: 'dimgray',
+    borderStyle: 'solid',
+    borderWidth: 2,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  buttonView: {
+    flex: 5,
+    justifyContent: 'space-around',
+    width: 200,
+  },
+});
 
 export default Account;

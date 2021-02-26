@@ -10,6 +10,9 @@ import {
   Pressable,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Stars from 'react-native-stars';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 class Favourite extends Component {
   constructor(props) {
@@ -90,7 +93,6 @@ class Favourite extends Component {
         }
       })
       .catch((error) => {
-        console.error(error);
         ToastAndroid.show(error, ToastAndroid.SHORT);
       });
   }
@@ -109,25 +111,91 @@ class Favourite extends Component {
       );
     } else {
       return (
-        <View>
-          <FlatList
-            data={this.state.locations}
-            renderItem={({item}) => (
-              <View>
-                <Pressable
-                  onPress={() => this.navigateToLogation(item.location_id)}>
-                  <Text>
-                    {item.location_name}--{item.location_town}
-                  </Text>
-                </Pressable>
-                <Button
-                  title="remove"
-                  onPress={() => this.deleteFavourite(item)}
-                />
-              </View>
-            )}
-            keyExtractor={(item, index) => item.location_id.toString()}
-          />
+        <View style={styles.flexContainer}>
+          <View style={styles.titleView}>
+            <Ionicons name="menu" size={30} color="white" />
+            <Text style={styles.title}>Favourite</Text>
+          </View>
+          <View style={styles.flatListView}>
+            <FlatList
+              data={this.state.locations}
+              renderItem={({item}) => (
+                <View>
+                  <Pressable
+                    style={styles.pressableView}
+                    onPress={() => this.navigateToLogation(item.location_id)}>
+                    <Text style={styles.locationName}>
+                      {item.location_name} ({item.location_town})
+                    </Text>
+                    <View style={styles.locationStarView}>
+                      <Text> Overall rating </Text>
+                      <Stars
+                        display={item.avg_overall_rating}
+                        count={5}
+                        half={true}
+                        fullStar={
+                          <FontAwesome name="star" size={20} color="#B8860B" />
+                        }
+                        emptyStar={
+                          <FontAwesome
+                            name="star-o"
+                            size={20}
+                            color="#B8860B"
+                          />
+                        }
+                        halfStar={
+                          <FontAwesome
+                            name="star-half-o"
+                            size={20}
+                            color="#B8860B"
+                          />
+                        }
+                      />
+                    </View>
+                    <View style={styles.locationStarView}>
+                      <Text> Price rating </Text>
+                      <Stars
+                        display={item.avg_price_rating}
+                        count={5}
+                        half={true}
+                        fullStar={<FontAwesome name="star" size={20} />}
+                        emptyStar={<FontAwesome name="star-o" size={20} />}
+                        halfStar={<FontAwesome name="star-half-o" size={20} />}
+                      />
+                    </View>
+                    <View style={styles.locationStarView}>
+                      <Text> Quality Rating </Text>
+                      <Stars
+                        display={item.avg_quality_rating}
+                        count={5}
+                        half={true}
+                        fullStar={<FontAwesome name="star" size={20} />}
+                        emptyStar={<FontAwesome name="star-o" size={20} />}
+                        halfStar={<FontAwesome name="star-half-o" size={20} />}
+                      />
+                    </View>
+                    <View style={styles.locationStarView}>
+                      <Text> Clenliness Rating </Text>
+                      <Stars
+                        display={item.avg_clenliness_rating}
+                        count={5}
+                        half={true}
+                        fullStar={<FontAwesome name="star" size={20} />}
+                        emptyStar={<FontAwesome name="star-o" size={20} />}
+                        halfStar={<FontAwesome name="star-half-o" size={20} />}
+                      />
+                    </View>
+                  </Pressable>
+                  <Button
+                    title="remove"
+                    color="black"
+                    onPress={() => this.deleteFavourite(item)}
+                  />
+                </View>
+              )}
+              keyExtractor={(item, index) => item.location_id.toString()}
+            />
+          </View>
         </View>
       );
     }
@@ -137,7 +205,35 @@ class Favourite extends Component {
 const styles = StyleSheet.create({
   flexContainer: {
     flex: 1,
-    backgroundColor: 'blanchedalmond',
+    backgroundColor: 'white',
+  },
+  titleView: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor: '#B8860B',
+    borderBottomWidth: 2,
+    borderStyle: 'solid',
+  },
+  title: {
+    fontWeight: 'bold',
+    fontSize: 30,
+    color: 'white',
+  },
+  flatListView: {
+    flex: 11,
+  },
+  pressableView: {
+    backgroundColor: 'whitesmoke',
+  },
+  locationName: {
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  locationStarView: {
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
 });
 

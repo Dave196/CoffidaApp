@@ -13,6 +13,9 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CheckBox from '@react-native-community/checkbox';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Stars from 'react-native-stars';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 class Find extends Component {
   constructor(props) {
@@ -22,10 +25,10 @@ class Find extends Component {
       isLoading: true,
       locations: {},
       search: '',
-      overall_rating: '',
-      quality_rating: '',
-      price_rating: '',
-      clenliness_rating: '',
+      overall_rating: 0,
+      quality_rating: 0,
+      price_rating: 0,
+      clenliness_rating: 0,
     };
   }
 
@@ -91,6 +94,16 @@ class Find extends Component {
       });
   };
 
+  resetFilter = () => {
+    this.setState({
+      search: '',
+      overall_rating: 0,
+      price_rating: 0,
+      quality_rating: 0,
+      clenliness_rating: 0,
+    });
+  };
+
   getLocations = async () => {
     const token = await AsyncStorage.getItem('@session_token');
     let filter = '';
@@ -102,16 +115,16 @@ class Find extends Component {
     if (this.state.search !== '') {
       filter = filter + '&' + 'q=' + this.state.search;
     }
-    if (this.state.overall_rating !== '') {
+    if (this.state.overall_rating !== 0) {
       filter = filter + '&' + 'overall_rating=' + this.state.overall_rating;
     }
-    if (this.state.price_rating !== '') {
+    if (this.state.price_rating !== 0) {
       filter = filter + '&' + 'price_rating=' + this.state.price_rating;
     }
-    if (this.state.quality_rating !== '') {
+    if (this.state.quality_rating !== 0) {
       filter = filter + '&' + 'quality_rating=' + this.state.quality_rating;
     }
-    if (this.state.clenliness_rating !== '') {
+    if (this.state.clenliness_rating !== 0) {
       filter =
         filter + '&' + 'clenliness_rating=' + this.state.clenliness_rating;
     }
@@ -139,7 +152,6 @@ class Find extends Component {
         });
       })
       .catch((error) => {
-        console.error(error);
         ToastAndroid.show(error, ToastAndroid.SHORT);
       });
   };
@@ -161,13 +173,6 @@ class Find extends Component {
       });
     }
   };
-
-  errorLoading(item) {
-    item.displayImage = false;
-    this.setState({
-      locations: this.state.locations,
-    });
-  }
 
   async toggleFavourite(item) {
     const token = await AsyncStorage.getItem('@session_token');
@@ -240,63 +245,163 @@ class Find extends Component {
     } else {
       return (
         <View style={styles.flexContainer}>
-          <TextInput
-            placeholder="search"
-            onChangeText={this.handleSearchInput}
-            value={this.state.search}
-          />
-          <TextInput
-            placeholder="overall_rating"
-            onChangeText={this.handleOverallInput}
-            value={this.state.overall_rating}
-          />
-          <TextInput
-            placeholder="price_rating"
-            onChangeText={this.handlePriceInput}
-            value={this.state.price_rating}
-          />
-          <TextInput
-            placeholder="quality_rating"
-            onChangeText={this.handleQualityInput}
-            value={this.state.quality_rating}
-          />
-          <TextInput
-            placeholder="clenliness_rating"
-            onChangeText={this.handleClenlinessInput}
-            value={this.state.clenliness_rating}
-          />
-          <Button title="Apply Filter" onPress={this.checkFavourites} />
-          <FlatList
-            data={this.state.locations}
-            renderItem={({item}) => (
-              <View>
-                <Pressable
-                  onPress={() => this.navigateToLogation(item.location_id)}>
-                  <Text>
-                    {item.location_name}--{item.location_town}
-                  </Text>
-                  {this.state.displayImage ? (
-                    <Image
-                      style={styles.reviewImage}
-                      source={{
-                        uri: item.photo_path,
-                      }}
-                      onError={() => this.errorLoading(item)}
-                    />
-                  ) : (
-                    <View>
-                      <Text>No image </Text>
+          <View style={styles.titleView}>
+            <Ionicons name="menu" size={30} color="white" />
+            <Text style={styles.title}>Find</Text>
+          </View>
+          <View style={styles.filterView}>
+            <TextInput
+              style={styles.textInput}
+              placeholder="search"
+              onChangeText={this.handleSearchInput}
+              value={this.state.search}
+            />
+            <View style={styles.starView}>
+              <Text> overall rating </Text>
+              <Stars
+                default={this.state.overall_rating}
+                count={5}
+                half={true}
+                fullStar={<FontAwesome name="star" size={30} />}
+                emptyStar={<FontAwesome name="star-o" size={30} />}
+                halfStar={<FontAwesome name="star-half-o" size={30} />}
+                update={(val) => this.setState({overall_rating: val})}
+              />
+              <Text> {this.state.overall_rating} </Text>
+            </View>
+            <View style={styles.starView}>
+              <Text> Price rating </Text>
+              <Stars
+                default={this.state.price_rating}
+                count={5}
+                half={true}
+                fullStar={<FontAwesome name="star" size={30} />}
+                emptyStar={<FontAwesome name="star-o" size={30} />}
+                halfStar={<FontAwesome name="star-half-o" size={30} />}
+                update={(val) => this.setState({price_rating: val})}
+              />
+              <Text> {this.state.price_rating} </Text>
+            </View>
+            <View style={styles.starView}>
+              <Text> Quality rating </Text>
+              <Stars
+                default={this.state.quality_rating}
+                count={5}
+                half={true}
+                fullStar={<FontAwesome name="star" size={30} />}
+                emptyStar={<FontAwesome name="star-o" size={30} />}
+                halfStar={<FontAwesome name="star-half-o" size={30} />}
+                update={(val) => this.setState({quality_rating: val})}
+              />
+              <Text> {this.state.quality_rating} </Text>
+            </View>
+            <View style={styles.starView}>
+              <Text> clenliness_rating </Text>
+              <Stars
+                default={this.state.clenliness_rating}
+                count={5}
+                half={true}
+                fullStar={<FontAwesome name="star" size={30} />}
+                emptyStar={<FontAwesome name="star-o" size={30} />}
+                halfStar={<FontAwesome name="star-half-o" size={30} />}
+                update={(val) => this.setState({clenliness_rating: val})}
+              />
+              <Text> {this.state.clenliness_rating} </Text>
+            </View>
+          </View>
+          <View style={styles.buttonView}>
+            <Button title="reset" onPress={this.resetFilter} color="black" />
+            <Button
+              title="Apply Filter"
+              onPress={this.checkFavourites}
+              color="#B8860B"
+            />
+            <Text> (Press on location) </Text>
+          </View>
+          <View style={styles.flatListView}>
+            <FlatList
+              data={this.state.locations}
+              renderItem={({item}) => (
+                <View>
+                  <Pressable
+                    style={styles.pressableView}
+                    onPress={() => this.navigateToLogation(item.location_id)}>
+                    <Text style={styles.locationName}>
+                      {item.location_name} ({item.location_town})
+                    </Text>
+                    <View style={styles.locationStarView}>
+                      <Text> Overall rating </Text>
+                      <Stars
+                        display={item.avg_overall_rating}
+                        count={5}
+                        half={true}
+                        fullStar={
+                          <FontAwesome name="star" size={20} color="#B8860B" />
+                        }
+                        emptyStar={
+                          <FontAwesome
+                            name="star-o"
+                            size={20}
+                            color="#B8860B"
+                          />
+                        }
+                        halfStar={
+                          <FontAwesome
+                            name="star-half-o"
+                            size={20}
+                            color="#B8860B"
+                          />
+                        }
+                      />
                     </View>
-                  )}
-                </Pressable>
-                <CheckBox
-                  value={item.favourited}
-                  onValueChange={() => this.toggleFavourite(item)}
-                />
-              </View>
-            )}
-            keyExtractor={(item, index) => item.location_id.toString()}
-          />
+                    <View style={styles.locationStarView}>
+                      <Text> Price rating </Text>
+                      <Stars
+                        display={item.avg_price_rating}
+                        count={5}
+                        half={true}
+                        fullStar={<FontAwesome name="star" size={20} />}
+                        emptyStar={<FontAwesome name="star-o" size={20} />}
+                        halfStar={<FontAwesome name="star-half-o" size={20} />}
+                      />
+                    </View>
+                    <View style={styles.locationStarView}>
+                      <Text> Quality Rating </Text>
+                      <Stars
+                        display={item.avg_quality_rating}
+                        count={5}
+                        half={true}
+                        fullStar={<FontAwesome name="star" size={20} />}
+                        emptyStar={<FontAwesome name="star-o" size={20} />}
+                        halfStar={<FontAwesome name="star-half-o" size={20} />}
+                      />
+                    </View>
+                    <View style={styles.locationStarView}>
+                      <Text> Clenliness Rating </Text>
+                      <Stars
+                        display={item.avg_clenliness_rating}
+                        count={5}
+                        half={true}
+                        fullStar={<FontAwesome name="star" size={20} />}
+                        emptyStar={<FontAwesome name="star-o" size={20} />}
+                        halfStar={<FontAwesome name="star-half-o" size={20} />}
+                      />
+                    </View>
+                  </Pressable>
+                  <View style={styles.favouriteView}>
+                    <Text> Favourited </Text>
+                    <CheckBox
+                      value={item.favourited}
+                      tintColors={{true: '#B8860B', false: 'black'}}
+                      color="#B8860B"
+                      onValueChange={() => this.toggleFavourite(item)}
+                    />
+                  </View>
+                </View>
+              )}
+              keyExtractor={(item, index) => item.location_id.toString()}
+            />
+          </View>
         </View>
       );
     }
@@ -306,26 +411,65 @@ class Find extends Component {
 const styles = StyleSheet.create({
   flexContainer: {
     flex: 1,
-    backgroundColor: 'antiquewhite',
+    backgroundColor: 'white',
+  },
+  titleView: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor: '#B8860B',
+    borderStyle: 'solid',
+  },
+  title: {
+    fontWeight: 'bold',
+    fontSize: 30,
+    color: 'white',
+  },
+  filterView: {
+    flex: 4,
+    justifyContent: 'space-between',
+    backgroundColor: 'lightgray',
+  },
+  textInput: {
+    width: '100%',
+    backgroundColor: 'dimgray',
+    borderStyle: 'solid',
+    borderWidth: 2,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  starView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+  },
+  buttonView: {
+    flex: 2,
+  },
+  flatListView: {
+    flex: 6,
+  },
+  pressableView: {
+    backgroundColor: 'whitesmoke',
+  },
+  locationName: {
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  locationStarView: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  favouriteView: {
+    justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   reviewImage: {
     width: 50,
     height: 50,
     resizeMode: 'contain',
-  },
-  title: {
-    flex: 1,
-    fontWeight: 'bold',
-  },
-  textInput: {
-    flex: 2,
-    width: 200,
-    backgroundColor: 'dimgray',
-    borderStyle: 'solid',
-    borderWidth: 2,
-  },
-  loginButton: {
-    backgroundColor: '#841584',
   },
 });
 

@@ -8,9 +8,13 @@ import {
   ActivityIndicator,
   FlatList,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Stars from 'react-native-stars';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 class Location extends Component {
   constructor(props) {
@@ -19,9 +23,10 @@ class Location extends Component {
     this.state = {
       isLoading: true,
       location: {},
+      displayImage: true,
       accountReviews: [],
       likedID: [],
-      locationID: ''
+      locationID: '',
     };
   }
 
@@ -108,6 +113,12 @@ class Location extends Component {
         console.error(error);
         ToastAndroid.show(error, ToastAndroid.SHORT);
       });
+  };
+
+  errorLocationLoading = () => {
+    this.setState({
+      displayImage: false,
+    });
   };
 
   initialCheck = (item, locationID) => {
@@ -234,6 +245,7 @@ class Location extends Component {
       ).then((response) => {
         if (response.status === 200) {
           item.liked = 'like1';
+          item.likes = item.likes + 1;
           this.setState({
             location: this.state.location,
           });
@@ -261,6 +273,7 @@ class Location extends Component {
       ).then((response) => {
         if (response.status === 200) {
           item.liked = 'like2';
+          item.likes = item.likes - 1;
           this.setState({
             location: this.state.location,
           });
@@ -287,57 +300,202 @@ class Location extends Component {
     } else {
       return (
         <View style={styles.flexContainer}>
-          <Text>{this.state.location.location_name} </Text>
-          <Button
-            title="Add review"
-            onPress={() => this.props.navigation.navigate('NewReview')}
-          />
-          <Text> MY REVIEWS </Text>
-          <FlatList
-            data={this.state.accountReviews}
-            renderItem={({item}) => (
-              <View>
-                <Text>{item.review_body}</Text>
-                <Button
-                  title="Update"
-                  onPress={() => this.updateReview(item)}
-                />
-                <Button
-                  title="Delete"
-                  onPress={() => this.deleteReview(item.review_id)}
+          <View style={styles.titleView}>
+            <Ionicons name="menu" size={30} color="white" />
+            <Icon
+              name="arrowleft"
+              size={35}
+              color="white"
+              onPress={() => this.props.navigation.goBack()}
+            />
+            <Text style={styles.title}>
+              {this.state.location.location_name} (
+              {this.state.location.location_town})
+            </Text>
+          </View>
+          <View style={styles.locationView}>
+            <ScrollView>
+              <View style={styles.starView}>
+                <Text> Average Overall Rating </Text>
+                <Stars
+                  display={this.state.location.avg_overall_rating}
+                  count={5}
+                  half={true}
+                  fullStar={
+                    <FontAwesome name="star" size={30} color="#B8860B" />
+                  }
+                  emptyStar={
+                    <FontAwesome name="star-o" size={30} color="#B8860B" />
+                  }
+                  halfStar={
+                    <FontAwesome name="star-half-o" size={30} color="#B8860B" />
+                  }
                 />
               </View>
-            )}
-            keyExtractor={(item, index) => item.review_id.toString()}
-          />
-
-          <Text> ALL REVIEWS </Text>
-          <FlatList
-            data={this.state.location.location_reviews}
-            renderItem={({item}) => (
-              <View>
-                <Text>{item.review_body}</Text>
-                <Icon
-                  name={item.liked}
-                  size={20}
-                  onPress={() => this.toggleLike(item)}
+              <View style={styles.starView}>
+                <Text> Average Price Rating </Text>
+                <Stars
+                  display={this.state.location.avg_price_rating}
+                  count={5}
+                  half={true}
+                  fullStar={<FontAwesome name="star" size={30} />}
+                  emptyStar={<FontAwesome name="star-o" size={30} />}
+                  halfStar={<FontAwesome name="star-half-o" size={30} />}
                 />
-                {item.displayImage ? (
-                  <Image
-                    style={styles.reviewImage}
-                    source={{
-                      uri: item.photo,
-                    }}
-                  />
-                ) : (
-                  <View>
-                    <Text>No image </Text>
+              </View>
+              <View style={styles.starView}>
+                <Text> Average Quality Rating </Text>
+                <Stars
+                  display={this.state.location.avg_quality_rating}
+                  count={5}
+                  half={true}
+                  fullStar={<FontAwesome name="star" size={30} />}
+                  emptyStar={<FontAwesome name="star-o" size={30} />}
+                  halfStar={<FontAwesome name="star-half-o" size={30} />}
+                />
+              </View>
+              <View style={styles.starView}>
+                <Text> Average Clenliness Rating </Text>
+                <Stars
+                  display={this.state.location.avg_clenliness_rating}
+                  count={5}
+                  half={true}
+                  fullStar={<FontAwesome name="star" size={30} />}
+                  emptyStar={<FontAwesome name="star-o" size={30} />}
+                  halfStar={<FontAwesome name="star-half-o" size={30} />}
+                />
+              </View>
+              <Button
+                title="Add review"
+                onPress={() => this.props.navigation.navigate('NewReview')}
+                color="#B8860B"
+              />
+              {this.state.displayImage ? (
+                <Image
+                  style={styles.reviewImage}
+                  source={{
+                    uri: this.state.location.photo_path,
+                  }}
+                  onError={this.errorLocationLoading}
+                />
+              ) : (
+                <View>
+                  <Text>--No image--</Text>
+                </View>
+              )}
+            </ScrollView>
+          </View>
+          <View style={styles.myReviewView}>
+            <Text style={styles.heading}> My Reviews </Text>
+            <FlatList
+              data={this.state.accountReviews}
+              renderItem={({item}) => (
+                <View style={styles.myReviewItem}>
+                  <Text style={styles.bodyText}>{item.review_body}</Text>
+                  <View style={styles.myReviewButtons}>
+                    <Button
+                      style={styles.myReviewButton}
+                      title="Update"
+                      onPress={() => this.updateReview(item)}
+                      color="#B8860B"
+                    />
+                    <Button
+                      title="Delete"
+                      onPress={() => this.deleteReview(item.review_id)}
+                      color="black"
+                    />
                   </View>
-                )}
-              </View>
-            )}
-            keyExtractor={(item, index) => item.review_id.toString()}
-          />
+                </View>
+              )}
+              keyExtractor={(item, index) => item.review_id.toString()}
+            />
+          </View>
+          <View style={styles.allReviewView}>
+            <Text style={styles.heading}> All Reviews </Text>
+            <FlatList
+              data={this.state.location.location_reviews}
+              renderItem={({item}) => (
+                <View style={styles.allReviewItem}>
+                  <Text style={styles.bodyText}>{item.review_body}</Text>
+                  <View style={styles.likes}>
+                    <Icon
+                      name={item.liked}
+                      size={20}
+                      onPress={() => this.toggleLike(item)}
+                    />
+                    <Text>{item.likes}</Text>
+                  </View>
+                  <View style={styles.reviewStarView}>
+                    <Text> overall rating </Text>
+                    <Stars
+                      display={item.overall_rating}
+                      count={5}
+                      half={true}
+                      fullStar={
+                        <FontAwesome name="star" size={20} color="#B8860B" />
+                      }
+                      emptyStar={
+                        <FontAwesome name="star-o" size={20} color="#B8860B" />
+                      }
+                      halfStar={
+                        <FontAwesome
+                          name="star-half-o"
+                          size={20}
+                          color="#B8860B"
+                        />
+                      }
+                    />
+                  </View>
+                  <View style={styles.reviewStarView}>
+                    <Text> Price rating </Text>
+                    <Stars
+                      display={item.price_rating}
+                      count={5}
+                      half={true}
+                      fullStar={<FontAwesome name="star" size={20} />}
+                      emptyStar={<FontAwesome name="star-o" size={20} />}
+                      halfStar={<FontAwesome name="star-half-o" size={20} />}
+                    />
+                  </View>
+                  <View style={styles.reviewStarView}>
+                    <Text> Quality Rating </Text>
+                    <Stars
+                      display={item.quality_rating}
+                      count={5}
+                      half={true}
+                      fullStar={<FontAwesome name="star" size={20} />}
+                      emptyStar={<FontAwesome name="star-o" size={20} />}
+                      halfStar={<FontAwesome name="star-half-o" size={20} />}
+                    />
+                  </View>
+                  <View style={styles.reviewStarView}>
+                    <Text> Clenliness Rating </Text>
+                    <Stars
+                      display={item.clenliness_rating}
+                      count={5}
+                      half={true}
+                      fullStar={<FontAwesome name="star" size={20} />}
+                      emptyStar={<FontAwesome name="star-o" size={20} />}
+                      halfStar={<FontAwesome name="star-half-o" size={20} />}
+                    />
+                  </View>
+                  {item.displayImage ? (
+                    <Image
+                      style={styles.reviewImage}
+                      source={{
+                        uri: item.photo,
+                      }}
+                    />
+                  ) : (
+                    <View>
+                      <Text>--No image-- </Text>
+                    </View>
+                  )}
+                </View>
+              )}
+              keyExtractor={(item, index) => item.review_id.toString()}
+            />
+          </View>
         </View>
       );
     }
@@ -347,19 +505,72 @@ class Location extends Component {
 const styles = StyleSheet.create({
   flexContainer: {
     flex: 1,
-    backgroundColor: 'antiquewhite',
+    backgroundColor: 'white',
   },
-  myReview: {
+  titleView: {
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor: '#B8860B',
+    borderStyle: 'solid',
+  },
+  title: {
+    fontWeight: 'bold',
+    fontSize: 25,
+    color: 'white',
+  },
+  locationView: {
+    flex: 3,
+    backgroundColor: 'lightgray',
+  },
+  starView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderBottomWidth: 2,
+  },
+  bodyText: {
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 16,
+  },
+  myReviewView: {
+    flex: 2,
+  },
+  myReviewItem: {
+    backgroundColor: 'whitesmoke',
+  },
+  myReviewButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    borderBottomWidth: 2,
+  },
+  myReviewButton: {
+    width: 50,
+  },
+  heading: {
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  allReviewView: {
+    flex: 6,
+  },
+  allReviewItem: {
+    backgroundColor: 'whitesmoke',
+    borderBottomWidth: 5,
+    alignItems: 'center',
+  },
+  likes: {
+    flexDirection: 'row',
+  },
+  reviewStarView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   reviewImage: {
     width: 200,
     height: 200,
     resizeMode: 'contain',
-  },
-  title: {
-    flex: 1,
-    fontWeight: 'bold',
   },
 });
 
