@@ -1,2 +1,2 @@
 CoffidaApp
-The inital project setup for the app without anything being done to it
+I used a eslinter for for my project style
